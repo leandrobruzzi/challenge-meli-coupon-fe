@@ -21,3 +21,69 @@ p{
     padding-top: 2em;
     text-align: center;
 }
+.monto-gastado{
+    font-weight: bold;
+}
+.container-products{
+    padding-bottom: 8em;
+}
+
+.prod{
+    display: inline-block;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 7px 16px 0 rgb(0 0 0 / 20%), 0 1px 3px 0 rgb(0 0 0 / 10%);
+    width: 48%;
+    margin-top: 1em;
+    margin-left: auto;
+    margin-right: auto;
+}
+.prod-img{
+    padding: 1.5em 2em;
+    text-align: center;
+    height: 18em;
+}
+.prod-img img{
+    width: 100%;
+    max-width: 15em;
+    max-height: 15em;
+}
+
+.prod-precio{
+    height: 6em;
+	border-top: 1px solid #eaeaea;
+}
+.prod-precio span{
+    font-size: 1.7em;
+    font-weight: bold;
+    color: black;
+    font-family: Proxima Nova,-apple-system,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+}
+
+
+#simulador{
+    border-top: 2px solid #a0a0a0;
+    padding-top: 1em;
+}
+#simulador span{
+    font-size: 0.9em;
+}
+
+#simulador textarea{
+    width: 100%;
+    height: 5em;
+}
+#simulador textarea::-webkit-input-placeholder {
+    font-style: italic;
+ }
+
+ #simulador .valor-cupon span{
+    margin-right: 1em;
+ }
+ #simulador .valor-cupon{
+    padding-bottom: 2em;
+ }
+ #simulador .btn-calcular-cupon{
+     text-align: center;
+     padding-bottom: 3em;
+ }
