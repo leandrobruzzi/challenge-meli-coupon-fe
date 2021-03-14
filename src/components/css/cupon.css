@@ -5,11 +5,19 @@
 .regalo img{
     width: 50%;
 }
-.agradecimiento {
-    margin:0 auto;
-    text-align: center;
+p{
     font-size: 1.10em;
     font-weight: 500;
     color: #4b4b4b;
     font-family: Proxima Nova,-apple-system,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+}
+.agradecimiento {
+    margin:0 auto;
+    text-align: center;
+    border-bottom: 2px solid #e5d850;
+    border-bottom-style: dashed;
+}
+.titulo-productos{
+    padding-top: 2em;
+    text-align: center;
 }
