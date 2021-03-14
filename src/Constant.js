@@ -1,0 +1,1 @@
+export const URL_BASE_BE = "https://challenge-meli-coupon.herokuapp.com";

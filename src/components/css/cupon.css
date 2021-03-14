@@ -1,0 +1,15 @@
+.regalo{
+    text-align: center;
+    padding: 2em 0em;
+}
+.regalo img{
+    width: 50%;
+}
+.agradecimiento {
+    margin:0 auto;
+    text-align: center;
+    font-size: 1.10em;
+    font-weight: 500;
+    color: #4b4b4b;
+    font-family: Proxima Nova,-apple-system,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+}
