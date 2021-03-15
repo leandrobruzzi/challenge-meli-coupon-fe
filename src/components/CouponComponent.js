@@ -17,6 +17,8 @@ const CuponComponent = () => {
         }
     ]); 
     
+    const [descripcionError, setDescripcionError] = useState("");
+
     const [montoGastado, setMontoGastado] = useState(475);
 
     const [ids, setIds] = useState("");
@@ -24,10 +26,20 @@ const CuponComponent = () => {
 
     const [monto, setMonto] = useState("");
     const handleChangeMonto = (e) => setMonto(e.target.value);
+
+    const [disabledButton, setDisabledButton] = useState(false);
       
     async function calculateCoupon(){
+        setDisabledButton(true);
         try{
+            setDescripcionError("");
             console.log("Calculando cupon...");
+
+            if(Number.isNaN(Number(monto))){
+                setDescripcionError("El valor del cupon tiene que ser numerico.");
+                return;
+            }
+
             let newIds = ids.replaceAll(" ","").replaceAll("-","");
             setIds(newIds);
             console.log("Ids: " + newIds);
@@ -54,8 +66,13 @@ const CuponComponent = () => {
             setMontoGastado(response.data.total);
             setItems(newItems);         
         }catch(e){
-            console.log(e);
+            if(e.response != null && e.response.status == 404){
+                setDescripcionError("El monto del cupon tiene que ser suficiente para comprar al menos un producto.");
+            }else{
+                setDescripcionError("Ups algo salio mal. Intentelo nuevamente en unos minutos");
+            }
         }
+        setDisabledButton(false);
     }
 
     return(
@@ -116,7 +133,16 @@ const CuponComponent = () => {
                     <span>Valor del cupon</span><input type="text" placeholder="600" value={monto} onChange={handleChangeMonto}/>
                 </div>
                 <div className="btn-calcular-cupon col-12 col-md-8">
-                    <button type="button" className="btn btn-primary" onClick={calculateCoupon}>Calcular cupon</button>
+                    <p>{descripcionError}</p>
+                    { !disabledButton && 
+                        <button className="btn btn-primary" type="button" onClick={calculateCoupon}>Calcular cupon</button>
+                    }
+                    { disabledButton && 
+                        <button className="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            Calculando...
+                        </button>
+                    }
                 </div>
             </div>
             
