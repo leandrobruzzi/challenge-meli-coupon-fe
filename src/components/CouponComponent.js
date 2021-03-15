@@ -87,7 +87,7 @@ const CuponComponent = () => {
             </div>
             <div className="row justify-content-center">
                 <div className="agradecimiento col-12 col-md-6">
-                    <p>Gracias por elegirnos continuamente<br></br>Queremos recompensarte con un cupon por $500</p>
+                    <p>Gracias por elegirnos continuamente<br></br>Queremos recompensarte con un cupon por ${monto}</p>
                 </div>
             </div>
             <div className="row justify-content-center">
