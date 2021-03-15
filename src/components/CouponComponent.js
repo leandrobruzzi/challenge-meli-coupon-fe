@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './css/cupon.css';
 import axios from 'axios';
 import { URL_BASE_BE, URL_BASE_API_MELI } from '../Constant'
 const { useState } = React;
 
 const CuponComponent = () => {
-    let firstTime = true;
 
     const [items, setItems] = useState([
         {
@@ -16,8 +15,10 @@ const CuponComponent = () => {
             imageURL: 'https://http2.mlstatic.com/D_Q_NP_840942-MLA40352270195_012020-AB.webp',
             valor: 125
         }
-    ]
-    ); 
+    ]); 
+    
+    const [descripcionError, setDescripcionError] = useState("");
+
     const [montoGastado, setMontoGastado] = useState(475);
 
     const [ids, setIds] = useState("");
@@ -25,54 +26,60 @@ const CuponComponent = () => {
 
     const [monto, setMonto] = useState("");
     const handleChangeMonto = (e) => setMonto(e.target.value);
+
+    const [disabledButton, setDisabledButton] = useState(false);
       
-    let calculateCoupon = async() => {
+    async function calculateCoupon(){
+        setDisabledButton(true);
         try{
-            if(firstTime){
-                firstTime=false;
-            }else{
-                console.log("Calculando cupon...");
-                let newIds = ids.replaceAll(" ","").replaceAll("-","");
-                setIds(newIds);
-                console.log("Ids: " + newIds);
-                console.log("Monto: " + monto);
-                
-                let objectRequest = {
-                    item_ids: newIds.split(","),
-                    amount: monto
-                }
+            setDescripcionError("");
+            console.log("Calculando cupon...");
 
-                let response = await axios.post(`${URL_BASE_BE}/coupon`, objectRequest);
-                console.log(response);
-                let newItems = new Array();
-                for (let i = 0; i < response.data.item_ids.length; i++) {
-                    const itemId = response.data.item_ids[i];
-                    let responseApiMeli = await axios.get(`${URL_BASE_API_MELI}/items/${itemId}`);
-                    console.log(responseApiMeli.data);
-                    newItems.push({
-                        imageURL: responseApiMeli.data.pictures[0].secure_url,
-                        valor: responseApiMeli.data.base_price
-                    })
-                }
-
-                setMontoGastado(response.data.total);
-                setItems(newItems);
+            if(Number.isNaN(Number(monto))){
+                setDescripcionError("El valor del cupon tiene que ser numerico.");
+                return;
             }
+
+            let newIds = ids.replaceAll(" ","").replaceAll("-","");
+            setIds(newIds);
+            console.log("Ids: " + newIds);
+            console.log("Monto: " + monto);
+            
+            let objectRequest = {
+                item_ids: newIds.split(","),
+                amount: monto
+            };
+
+            let response = await axios.post(`${URL_BASE_BE}/coupon`, objectRequest);
+            console.log(response);
+            let newItems = [];
+            for (let i = 0; i < response.data.item_ids.length; i++) {
+                const itemId = response.data.item_ids[i];
+                let responseApiMeli = await axios.get(`${URL_BASE_API_MELI}/items/${itemId}`);
+                console.log(responseApiMeli.data);
+                newItems.push({
+                    imageURL: responseApiMeli.data.pictures[0].secure_url,
+                    valor: responseApiMeli.data.base_price
+                });
+            }
+
+            setMontoGastado(response.data.total);
+            setItems(newItems);         
         }catch(e){
-            console.log(e);
+            if(e.response != null && e.response.status == 404){
+                setDescripcionError("El monto del cupon tiene que ser suficiente para comprar al menos un producto.");
+            }else{
+                setDescripcionError("Ups algo salio mal. Intentelo nuevamente en unos minutos");
+            }
         }
-
+        setDisabledButton(false);
     }
-
-    useEffect(async() => {
-        await calculateCoupon();
-    }, []);
 
     return(
         <section>
             <div className="row justify-content-center">
                 <div className="regalo col-12 col-md-6">
-                    <img src="/Regalo.png"></img>
+                    <img src="/Regalo.png" alt="regalo"></img>
                 </div>
             </div>
             <div className="row justify-content-center">
@@ -92,22 +99,20 @@ const CuponComponent = () => {
                         <div className="col-12">
                             <div className="row">
                                 {
-                                    items.length != 0 && (
-                                        items.map(item => (
-                                            <div className="prod col-11 col-md-5">
-                                                <div className="row">
-                                                    <div className="col-12 prod-img img-uno">
-                                                        <img src={item.imageURL}></img>
-                                                    </div>
-                                                </div>
-                                                <div className="row prod-precio align-items-center">
-                                                    <div className="col-12">
-                                                        <span>${item.valor}</span>
-                                                    </div>
+                                    items.length !== 0 && items.map((item, index )=> (
+                                        <div key={index} className="prod col-11 col-md-5">
+                                            <div className="row">
+                                                <div className="col-12 prod-img img-uno">
+                                                    <img src={item.imageURL} alt="item"></img>
                                                 </div>
                                             </div>
-                                        ))
-                                    )
+                                            <div className="row prod-precio align-items-center">
+                                                <div className="col-12">
+                                                    <span>${item.valor}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
                                 }
                             </div>
                         </div>
@@ -128,7 +133,16 @@ const CuponComponent = () => {
                     <span>Valor del cupon</span><input type="text" placeholder="600" value={monto} onChange={handleChangeMonto}/>
                 </div>
                 <div className="btn-calcular-cupon col-12 col-md-8">
-                    <button type="button" className="btn btn-primary" onClick={calculateCoupon}>Calcular cupon</button>
+                    <p>{descripcionError}</p>
+                    { !disabledButton && 
+                        <button className="btn btn-primary" type="button" onClick={calculateCoupon}>Calcular cupon</button>
+                    }
+                    { disabledButton && 
+                        <button className="btn btn-primary" type="button" disabled>
+                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            Calculando...
+                        </button>
+                    }
                 </div>
             </div>
             
