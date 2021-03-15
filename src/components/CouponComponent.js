@@ -36,8 +36,7 @@ const CuponComponent = () => {
             console.log("Calculando cupon...");
 
             if(Number.isNaN(Number(monto))){
-                setDescripcionError("El valor del cupon tiene que ser numerico.");
-                return;
+                throw new Error("ERROR_VALUE_NOT_NUMERIC"); 
             }
 
             let newIds = ids.replaceAll(" ","").replaceAll("-","");
@@ -66,10 +65,14 @@ const CuponComponent = () => {
             setMontoGastado(response.data.total);
             setItems(newItems);         
         }catch(e){
-            if(e.response != null && e.response.status == 404){
+            if(e.response != null && e.response.status === 404){
                 setDescripcionError("El monto del cupon tiene que ser suficiente para comprar al menos un producto.");
             }else{
-                setDescripcionError("Ups algo salio mal. Intentelo nuevamente en unos minutos");
+                if(e.message === "ERROR_VALUE_NOT_NUMERIC"){
+                    setDescripcionError("El valor del cupon tiene que ser numerico.");
+                }else{
+                    setDescripcionError("Ups algo salio mal. Intentelo nuevamente en unos minutos");
+                }
             }
         }
         setDisabledButton(false);
@@ -139,7 +142,7 @@ const CuponComponent = () => {
                     }
                     { disabledButton && 
                         <button className="btn btn-primary" type="button" disabled>
-                            <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                            <span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                             Calculando...
                         </button>
                     }
