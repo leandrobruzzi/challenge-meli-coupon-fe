@@ -35,7 +35,6 @@ const CuponComponent = () => {
             setDescripcionError("");
             console.log("Calculando cupon...");
 
-            debugger;
             if(monto === ""){
                 throw new Error("ERROR_VALUE_NOT_VOID"); 
             }
