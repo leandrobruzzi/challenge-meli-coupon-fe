@@ -35,6 +35,10 @@ const CuponComponent = () => {
             setDescripcionError("");
             console.log("Calculando cupon...");
 
+            debugger;
+            if(monto === ""){
+                throw new Error("ERROR_VALUE_NOT_VOID"); 
+            }
             if(Number.isNaN(Number(monto))){
                 throw new Error("ERROR_VALUE_NOT_NUMERIC"); 
             }
@@ -66,12 +70,14 @@ const CuponComponent = () => {
             setItems(newItems);         
         }catch(e){
             if(e.response != null && e.response.status === 404){
-                setDescripcionError("El monto del cupon tiene que ser suficiente para comprar al menos un producto.");
+                setDescripcionError("El monto del cupón tiene que ser suficiente para comprar al menos un producto.");
             }else{
                 if(e.message === "ERROR_VALUE_NOT_NUMERIC"){
-                    setDescripcionError("El valor del cupon tiene que ser numerico.");
-                }else{
-                    setDescripcionError("Ups algo salio mal. Intentelo nuevamente en unos minutos");
+                    setDescripcionError("El valor del cupón tiene que ser numérico.");
+                } else if (e.message === "ERROR_VALUE_NOT_VOID"){
+                    setDescripcionError("El valor del cupón no puede estar vacío.");
+                } else{
+                    setDescripcionError("Ups algo salió mal. Inténtelo nuevamente en unos minutos.");
                 }
             }
         }
@@ -87,12 +93,12 @@ const CuponComponent = () => {
             </div>
             <div className="row justify-content-center">
                 <div className="agradecimiento col-12 col-md-6">
-                    <p>Gracias por elegirnos continuamente<br></br>Queremos recompensarte con un cupon por ${monto}</p>
+                    <p>Gracias por elegirnos continuamente<br></br>Queremos recompensarte con un cupón por ${monto}</p>
                 </div>
             </div>
             <div className="row justify-content-center">
                 <div className="titulo-productos col-12 col-md-6">
-                    <p>Lo podras canjear por los siguientes productos</p>
+                    <p>Lo podrás canjear por los siguientes productos</p>
                     <p>Monto Gastado <span className="monto-gastado">${montoGastado}</span></p>
                 </div>
             </div>
@@ -125,7 +131,7 @@ const CuponComponent = () => {
 
             <div id="simulador" className="row justify-content-center">
                 <div className="descrip-ids col-12 col-md-8">
-                    <span>Ingresá los ids de productos separados por coma para realizar tu simulacion</span>
+                    <span>Ingresá los ids de productos separados por coma para realizar tu simulación</span>
                 </div>
                 <div className="col-12 col-md-8">
                     <textarea placeholder="MLA-656039997,MLA-839687279,MLA-821267729" value={ids} onChange={handleChangeIds}>
@@ -133,12 +139,12 @@ const CuponComponent = () => {
                     </textarea>
                 </div>
                 <div className="valor-cupon col-12 col-md-8">
-                    <span>Valor del cupon</span><input type="text" placeholder="600" value={monto} onChange={handleChangeMonto}/>
+                    <span>Valor del cupón</span><input type="text" placeholder="600" value={monto} onChange={handleChangeMonto}/>
                 </div>
                 <div className="btn-calcular-cupon col-12 col-md-8">
                     <p>{descripcionError}</p>
                     { !disabledButton && 
-                        <button className="btn btn-primary" type="button" onClick={calculateCoupon}>Calcular cupon</button>
+                        <button className="btn btn-primary" type="button" onClick={calculateCoupon}>Calcular cupón</button>
                     }
                     { disabledButton && 
                         <button className="btn btn-primary" type="button" disabled>
